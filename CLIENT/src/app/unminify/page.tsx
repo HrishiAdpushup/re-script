@@ -1,12 +1,72 @@
-import Link from "next/link";
+"use client";
 
+import { useState } from "react";
+import { CodeBlock } from "@/components/CodeBlock";
 export default function HomePage() {
+  const [inputCode, setInputCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [hasTranslated, setHasTranslated] = useState(false);
+  const [outputCode, setOutputCode] = useState("");
+
+  const [model, setModel] = useState("base");
+  const handleTranslate = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/unminify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          code: inputCode,
+        }),
+      });
+
+      const data = await res.json();
+      setOutputCode(data.code);
+      setHasTranslated(true);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Use <span className="text-[hsl(280,100%,70%)]">Re</span> Script
-        </h1>
+    <main className="min-h-[80vh] ">
+      <div className="flex flex-col items-center justify-center gap-8 py-8 md:gap-16 md:pb-16 xl:pb-24">
+        <div className="mt-2 flex items-center space-x-2">
+          {/* <ModelSelect model={model} onChange={(value) => setModel(value)} /> */}
+
+          <button
+            className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
+            onClick={() => handleTranslate()}
+            disabled={loading}
+          >
+            {loading ? "Automagically rebuilding script..." : "UnMinify"}
+          </button>
+        </div>
+
+        <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
+          <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
+            <div className="text-center text-xl font-bold">Input</div>
+
+            <CodeBlock
+              code={inputCode}
+              editable={!loading}
+              onChange={(value) => {
+                setInputCode(value);
+                setHasTranslated(false);
+              }}
+            />
+          </div>
+          <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
+            <div className="text-center text-xl font-bold">Output</div>
+
+            <CodeBlock code={outputCode} />
+          </div>
+        </div>
       </div>
     </main>
   );
