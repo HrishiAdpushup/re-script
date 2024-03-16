@@ -4,12 +4,7 @@ import { useState, useMemo } from "react";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@nextui-org/dropdown";
+import { Combobox } from "@/components/ui/combobox";
 
 export default function HomePage() {
   const [inputCode, setInputCode] = useState("test data");
@@ -17,12 +12,7 @@ export default function HomePage() {
   const [outputCode, setOutputCode] = useState("");
   const [apiKey, setApiKey] = useState("");
 
-  const [model, setModel] = useState(new Set(["Select Model"]));
-
-  const selectedModel = useMemo(
-    () => Array.from(model).join(", ").replaceAll("_", " "),
-    [model],
-  );
+  const [model, setModel] = useState(null);
 
   const handleTranslate = async () => {
     setLoading(true);
@@ -54,27 +44,7 @@ export default function HomePage() {
       <div className="flex flex-col items-center justify-center gap-8 py-8 md:gap-16 md:pb-16 xl:pb-24">
         <div className="mt-2 flex max-w-4xl items-center justify-between gap-x-5">
           <div>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button variant="bordered" className="capitalize">
-                  {selectedModel}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Single selection example"
-                variant="flat"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={model}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-                onSelectionChange={(keys: any) => setModel(new Set(keys))}
-              >
-                <DropdownItem key="openAI">OpenAI</DropdownItem>
-                <DropdownItem key="claude">Claude</DropdownItem>
-                <DropdownItem key="gemini">Gemini</DropdownItem>
-                <DropdownItem key="local">Local</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Combobox onValueChange={setModel} />
           </div>
 
           <Input

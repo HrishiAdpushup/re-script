@@ -18,8 +18,16 @@ fastify.post("/unminify", async function handler(request, reply) {
   if (!data.code) {
     reply.code(400).send({ error: "No code provided" });
   }
-  const code = data.code;
-  const result = await rescript(code);
+  if (!data.model) {
+    reply.code(400).send({ error: "No model provided" });
+  }
+  if (!data.apiKey) {
+    reply.code(400).send({ error: "No apiKey provided" });
+  }
+
+  const { code, model, apiKey } = data;
+
+  const result = await rescript(code, model, apiKey);
   console.log("====================================");
   console.log(result);
   console.log("====================================");

@@ -1,19 +1,35 @@
 import babelTransform from "./modifiers/bableTransform.js";
 import prettier from "./modifiers/prettier.js";
 import webcrack from "./modifiers/webcrack.js";
+import AnthropicLLMModifier from "./llms/anthropic.js";
+import OpenAILLMModifier from "./llms/openai.js";
 
-const Modifiers = [babelTransform, prettier];
-export default async function rescript(code) {
+export default async function rescript(code, model, apiKey) {
   const crackedCodeInstance = await webcrack(code);
   const crackedCode = crackedCodeInstance.code;
 
+  const babelifiedCode = await babelTransform(crackedCode);
+
   console.log("====================================");
-  console.log(crackedCode);
+  console.log({ model, apiKey });
   console.log("====================================");
 
-  const formattedCode = await Modifiers.reduce(
-    (codeModifier, next) => codeModifier.then(next),
-    Promise.resolve(crackedCode)
-  );
+  let llmUpdatedCode = babelifiedCode;
+
+  if (model === "claude") {
+    llmUpdatedCode = await AnthropicLLMModifier(babelifiedCode, apiKey);
+    console.log("====================================");
+    console.log({ claud: llmUpdatedCode });
+    console.log("====================================");
+  } else if (model === "openAI") {
+    llmUpdatedCode = await OpenAILLMModifier(babelifiedCode, apiKey);
+    console.log("====================================");
+    console.log({ openai: llmUpdatedCode });
+    console.log("====================================");
+  } else if (model === "gemini") {
+  }
+
+  const formattedCode = await prettier(babelifiedCode);
+
   return formattedCode;
 }
