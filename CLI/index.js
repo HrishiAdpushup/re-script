@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { input, password } from "@inquirer/prompts";
 import select, { Separator } from "@inquirer/select";
 
@@ -43,8 +44,8 @@ async function main() {
     ],
   });
 
-  const apiKey = await password({
-    type: "password",
+  const apiKey = await input({
+    type: "input",
     name: "apiKey",
     message: "Enter your model API key",
   });
@@ -63,7 +64,7 @@ async function main() {
   );
   fs.writeFileSync(outFileLocation, result);
   ora("Code unminified successfully!").succeed().stop();
-  return;
+  process.exit(0);
 }
 
 main();

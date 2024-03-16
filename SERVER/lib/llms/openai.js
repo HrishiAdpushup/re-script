@@ -3,9 +3,6 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import LLMCodeInitialiser from "../utils/llmCodeInitialiser.js";
 
 async function OpenAiRenameUtility(code, apiKey) {
-  console.log("====================================");
-  console.log({ code, apiKey });
-  console.log("====================================");
   if (!code || !apiKey) {
     return null;
   }
@@ -64,9 +61,6 @@ async function OpenAiRenameUtility(code, apiKey) {
   );
 
   const initialOutput = result.additional_kwargs.function_call.arguments;
-  console.log("====================================");
-  console.log(initialOutput);
-  console.log("====================================");
   const cleanOutput = SanatiseOpenAiOutput(initialOutput);
 
   const { variablesAndFunctionsToRename } = JSON.parse(cleanOutput);

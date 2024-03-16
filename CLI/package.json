@@ -6,6 +6,7 @@
   "author": "roeintheglasses",
   "license": "MIT",
   "type": "module",
+  "bin": "index.js",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

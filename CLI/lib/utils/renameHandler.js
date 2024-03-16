@@ -88,9 +88,6 @@ export async function renameHandler(code, toRename) {
 }
 
 export async function claudRenameHandler(code, toRename) {
-  console.log("====================================");
-  console.log(toRename);
-  console.log("====================================");
   return await transformUsingBabelPlugins(code, [
     {
       visitor: {

@@ -29,9 +29,6 @@ fastify.post("/unminify", async function handler(request, reply) {
   const { code, model, apiKey } = data;
 
   const result = await rescript(code, model, apiKey);
-  console.log("====================================");
-  console.log(result);
-  console.log("====================================");
   reply.code(200).send({ data: result });
 });
 
@@ -51,9 +48,6 @@ fastify.post("/unminifyFile", async function handler(request, reply) {
   const { code, model, apiKey } = data;
 
   const result = await rescript(code, model, apiKey);
-  console.log("====================================");
-  console.log(result);
-  console.log("====================================");
   reply.code(200).send({ data: result });
 });
 

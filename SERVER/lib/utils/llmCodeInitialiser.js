@@ -15,8 +15,6 @@ export default async function LLMCodeInitialiser(
       variablesAndFunctionsToRename.concat(renames);
   };
   await mapPromisesParallely(10, codeBlocks, promiseCallback);
-  console.log("====================================");
-  console.log(variablesAndFunctionsToRename);
-  console.log("====================================");
+
   return renameHandler(code, variablesAndFunctionsToRename);
 }

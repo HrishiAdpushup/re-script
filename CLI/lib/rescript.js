@@ -18,12 +18,8 @@ export default async function rescript(code, model, apiKey) {
 
   if (model === "claude") {
     llmUpdatedCode = await AnthropicLLMModifier(babelifiedCode, apiKey);
-    console.log("====================================");
-    // console.log({ claud: llmUpdatedCode });
   } else if (model === "openAI") {
     llmUpdatedCode = await OpenAILLMModifier(babelifiedCode, apiKey);
-    console.log("====================================");
-    console.log({ openai: llmUpdatedCode });
   } else if (model === "gemini") {
   }
 

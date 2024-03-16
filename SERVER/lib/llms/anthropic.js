@@ -67,10 +67,6 @@ async function AnthropicRenameUtility(code, apiKey) {
 
   const { name, newName } = variablesAndFunctionsToRename[0];
 
-  console.log("====================================");
-  console.log({ name, newName });
-  console.log("====================================");
-
   const reStructuredVariablesAndFunctionsToRename = [];
 
   for (let i = 0; i < Math.min(name.length, newName.length); i++) {
