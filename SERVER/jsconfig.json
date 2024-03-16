@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "skipLibCheck": true,
+    "allowJs": true,
+
+    /* Path Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [".eslintrc.cjs", "**/*.js"],
+  "exclude": ["node_modules"]
+}

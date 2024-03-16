@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CodeBlock } from "@/components/CodeBlock";
 export default function HomePage() {
-  const [inputCode, setInputCode] = useState("");
+  const [inputCode, setInputCode] = useState("test data");
   const [loading, setLoading] = useState(false);
   const [hasTranslated, setHasTranslated] = useState(false);
   const [outputCode, setOutputCode] = useState("");
@@ -23,8 +23,9 @@ export default function HomePage() {
         }),
       });
 
-      const data = await res.json();
-      setOutputCode(data.code);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const code: { data: string } = await res.json();
+      setOutputCode(code.data);
       setHasTranslated(true);
       setLoading(false);
     } catch (e) {
