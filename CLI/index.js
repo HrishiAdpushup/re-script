@@ -1,4 +1,6 @@
-import { input, select, password } from "@inquirer/prompts";
+import { input, password } from "@inquirer/prompts";
+import select, { Separator } from "@inquirer/select";
+
 import ora from "ora";
 import fs from "fs";
 import chalk from "chalk";
@@ -7,10 +9,8 @@ import rescript from "./lib/rescript.js";
 const log = console.log;
 
 async function main() {
-  log(chalk.hex("#DEADED").bgWhite.bold("re-Script CLI"));
-  log(
-    chalk.hex("#DEADED").gray("A CLI to unminify your JS code using AI models.")
-  );
+  log(chalk.hex("#0d0d0d").bgWhite.bold("re-Script CLI"));
+  log(chalk.gray("A CLI to unminify your JS code using AI models."));
 
   const fileLocation = await input({
     type: "input",
@@ -22,7 +22,25 @@ async function main() {
     type: "select",
     name: "model",
     message: "Select the AI model to use",
-    choices: ["claude", "openAI"],
+    choices: [
+      {
+        name: "Claude-3",
+        value: "claude",
+        description: "Anthropic's latest Claude-3 model",
+      },
+
+      {
+        name: "GPT-4",
+        value: "openAI",
+        description: "OpenAI's latest GPT-4 model",
+      },
+      new Separator(),
+      {
+        name: "Local LLMs",
+        value: "local",
+        disabled: "(Support for local LLMs is coming soon!)",
+      },
+    ],
   });
 
   const apiKey = await password({
@@ -41,8 +59,11 @@ async function main() {
   const result = await rescript(code, model, apiKey);
   const outFileLocation = fileLocation.replace(
     ".js",
-    `_reScript${Date.now().toPrecision(4)}.js`
+    `_reScript${Date.now().toString().slice(0, 4)}.js`
   );
   fs.writeFileSync(outFileLocation, result);
-  ora("Re-minifying code...").succeed();
+  ora("Code unminified successfully!").succeed().stop();
+  return;
 }
+
+main();
