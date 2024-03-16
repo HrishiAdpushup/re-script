@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Combobox } from "@/components/ui/combobox";
+
+import { MagnifyingGlass } from "react-loader-spinner";
 
 export default function HomePage() {
   const [inputCode, setInputCode] = useState("test data");
@@ -64,6 +66,19 @@ export default function HomePage() {
               {loading ? "UnMinifying" : "UnMinify"}
             </Button>
           </div>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <MagnifyingGlass
+            visible={loading}
+            height="80"
+            width="80"
+            ariaLabel="magnifying-glass-loading"
+            wrapperStyle={{}}
+            wrapperClass="magnifying-glass-wrapper"
+            glassColor="#c0efff"
+            color="#e15b64"
+          />
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col items-start justify-between sm:flex-row sm:space-x-4">

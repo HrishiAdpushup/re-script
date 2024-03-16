@@ -22,19 +22,11 @@ import {
 const LLMs = [
   {
     value: "openAI",
-    label: "Open AI",
+    label: "GPT-4",
   },
   {
     value: "claude",
-    label: "Claude",
-  },
-  {
-    value: "gemini",
-    label: "Gemini",
-  },
-  {
-    value: "local",
-    label: "Local",
+    label: "Claude-3",
   },
 ];
 
