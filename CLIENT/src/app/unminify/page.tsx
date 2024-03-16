@@ -66,7 +66,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
+        <div className="mt-6 flex w-full max-w-[1200px] flex-col items-start justify-between sm:flex-row sm:space-x-4">
           <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
             <div className="text-center text-xl font-bold">Input</div>
 
