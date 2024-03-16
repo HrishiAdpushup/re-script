@@ -1,17 +1,22 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { divideIntoCodeBlocks } from "../utils/openAIEncoder.js";
+import { mapPromisesParallely } from "../utils/parallelPromises.js";
+import { renameHandler } from "../utils/renameHandler.js";
 
-export default async function OpenAILLMModifier(code, apiKey) {
+async function OpenAiRenameUtility(code, apiKey) {
+  console.log("====================================");
+  console.log({ code, apiKey });
+  console.log("====================================");
+  if (!code || !apiKey) {
+    return null;
+  }
   // https://platform.openai.com/docs/guides/gpt/function-calling
 
   const modelForFunctionCalling = new ChatOpenAI({
-    modelName: "gpt-4",
+    modelName: "gpt-4-0125-preview",
     temperature: 0.5,
     openAIApiKey: apiKey,
-  }).bind({
-    response_format: {
-      type: "json_object",
-    },
   });
 
   const result = await modelForFunctionCalling.invoke(
@@ -60,5 +65,29 @@ export default async function OpenAILLMModifier(code, apiKey) {
     }
   );
 
-  return result;
+  const initialOutput = result.additional_kwargs.function_call.arguments;
+  const cleanOutput = SanatiseOpenAiOutput(initialOutput);
+
+  const { variablesAndFunctionsToRename } = JSON.parse(cleanOutput);
+
+  return variablesAndFunctionsToRename;
+}
+
+function SanatiseOpenAiOutput(jsonResponse) {
+  return jsonResponse.replace(/},\s*]/im, "}]");
+}
+
+export default async function OpenAILLMModifier(code, apiKey) {
+  const codeBlocks = await divideIntoCodeBlocks(code);
+  let variablesAndFunctionsToRename = [];
+  const promiseCallback = async (codeBlock) => {
+    const renames = await OpenAiRenameUtility(codeBlock, apiKey);
+    variablesAndFunctionsToRename =
+      variablesAndFunctionsToRename.concat(renames);
+  };
+  await mapPromisesParallely(10, codeBlocks, promiseCallback);
+  console.log("====================================");
+  console.log(variablesAndFunctionsToRename);
+  console.log("====================================");
+  return renameHandler(code, variablesAndFunctionsToRename);
 }

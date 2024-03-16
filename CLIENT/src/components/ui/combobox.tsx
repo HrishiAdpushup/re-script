@@ -11,6 +11,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -65,25 +66,27 @@ export function Combobox({ onValueChange }: ComboboxProps) {
           <CommandInput placeholder="Search AI Models..." />
           <CommandEmpty>No AI Model found.</CommandEmpty>
           <CommandGroup>
-            {LLMs.map((llm) => (
-              <CommandItem
-                key={llm.value}
-                value={llm.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  onValueChange(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === llm.value ? "opacity-100" : "opacity-0",
-                  )}
-                />
-                {llm.label}
-              </CommandItem>
-            ))}
+            <CommandList>
+              {LLMs.map((llm) => (
+                <CommandItem
+                  key={llm.value}
+                  value={llm.value}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
+                    onValueChange(currentValue === value ? "" : currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === llm.value ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                  {llm.label}
+                </CommandItem>
+              ))}
+            </CommandList>
           </CommandGroup>
         </Command>
       </PopoverContent>

@@ -20,16 +20,14 @@ export default async function rescript(code, model, apiKey) {
     llmUpdatedCode = await AnthropicLLMModifier(babelifiedCode, apiKey);
     console.log("====================================");
     console.log({ claud: llmUpdatedCode });
-    console.log("====================================");
   } else if (model === "openAI") {
     llmUpdatedCode = await OpenAILLMModifier(babelifiedCode, apiKey);
     console.log("====================================");
     console.log({ openai: llmUpdatedCode });
-    console.log("====================================");
   } else if (model === "gemini") {
   }
 
-  const formattedCode = await prettier(babelifiedCode);
+  const formattedCode = await prettier(llmUpdatedCode);
 
   return formattedCode;
 }

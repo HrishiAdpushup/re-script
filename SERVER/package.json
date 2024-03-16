@@ -28,6 +28,7 @@
     "fastify-blipp": "^4.0.0",
     "fastify-plugin": "^4.5.1",
     "fastify-swagger": "^5.2.0",
+    "gpt-3-encoder": "^1.1.4",
     "langchain": "^0.1.28",
     "webcrack": "^2.13.0"
   },
