@@ -1,5 +1,6 @@
 // Import the framework and instantiate it
 import Fastify from "fastify";
+import fs from "fs";
 
 import rescript from "../lib/rescript.js";
 
@@ -16,6 +17,28 @@ fastify.post("/unminify", async function handler(request, reply) {
   const data = await request.body;
 
   if (!data.code) {
+    reply.code(400).send({ error: "No code provided" });
+  }
+  if (!data.model) {
+    reply.code(400).send({ error: "No model provided" });
+  }
+  if (!data.apiKey) {
+    reply.code(400).send({ error: "No apiKey provided" });
+  }
+
+  const { code, model, apiKey } = data;
+
+  const result = await rescript(code, model, apiKey);
+  console.log("====================================");
+  console.log(result);
+  console.log("====================================");
+  reply.code(200).send({ data: result });
+});
+
+fastify.post("/unminifyFile", async function handler(request, reply) {
+  const data = await request.body;
+
+  if (!data.codeFile) {
     reply.code(400).send({ error: "No code provided" });
   }
   if (!data.model) {

@@ -1,8 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { divideIntoCodeBlocks } from "../utils/openAIEncoder.js";
-import { mapPromisesParallely } from "../utils/parallelPromises.js";
-import { renameHandler } from "../utils/renameHandler.js";
+import LLMCodeInitialiser from "../utils/llmCodeInitialiser.js";
 
 async function OpenAiRenameUtility(code, apiKey) {
   console.log("====================================");
@@ -66,6 +64,9 @@ async function OpenAiRenameUtility(code, apiKey) {
   );
 
   const initialOutput = result.additional_kwargs.function_call.arguments;
+  console.log("====================================");
+  console.log(initialOutput);
+  console.log("====================================");
   const cleanOutput = SanatiseOpenAiOutput(initialOutput);
 
   const { variablesAndFunctionsToRename } = JSON.parse(cleanOutput);
@@ -78,16 +79,5 @@ function SanatiseOpenAiOutput(jsonResponse) {
 }
 
 export default async function OpenAILLMModifier(code, apiKey) {
-  const codeBlocks = await divideIntoCodeBlocks(code);
-  let variablesAndFunctionsToRename = [];
-  const promiseCallback = async (codeBlock) => {
-    const renames = await OpenAiRenameUtility(codeBlock, apiKey);
-    variablesAndFunctionsToRename =
-      variablesAndFunctionsToRename.concat(renames);
-  };
-  await mapPromisesParallely(10, codeBlocks, promiseCallback);
-  console.log("====================================");
-  console.log(variablesAndFunctionsToRename);
-  console.log("====================================");
-  return renameHandler(code, variablesAndFunctionsToRename);
+  return await LLMCodeInitialiser(code, apiKey, OpenAiRenameUtility);
 }

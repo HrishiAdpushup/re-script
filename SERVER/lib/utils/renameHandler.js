@@ -72,6 +72,22 @@ function isReservedWord(word) {
 }
 
 export async function renameHandler(code, toRename) {
+  return await transformUsingBabelPlugins(code, [
+    {
+      visitor: {
+        Identifier: (path) => {
+          const rename = toRename.find((r) => r.name === path.node.name);
+          if (rename)
+            path.node.name = isReservedWord(rename.newName)
+              ? `${rename.newName}$`
+              : rename.newName;
+        },
+      },
+    },
+  ]);
+}
+
+export async function claudRenameHandler(code, toRename) {
   console.log("====================================");
   console.log(toRename);
   console.log("====================================");
