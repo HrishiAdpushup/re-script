@@ -1,14 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CodeBlock } from "@/components/CodeBlock";
+import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/dropdown";
+
 export default function HomePage() {
   const [inputCode, setInputCode] = useState("test data");
   const [loading, setLoading] = useState(false);
-  const [hasTranslated, setHasTranslated] = useState(false);
   const [outputCode, setOutputCode] = useState("");
+  const [apiKey, setApiKey] = useState("");
 
-  const [model, setModel] = useState("base");
+  const [model, setModel] = useState(new Set(["Select Model"]));
+
+  const selectedModel = useMemo(
+    () => Array.from(model).join(", ").replaceAll("_", " "),
+    [model],
+  );
+
   const handleTranslate = async () => {
     setLoading(true);
     try {
@@ -20,13 +35,13 @@ export default function HomePage() {
         body: JSON.stringify({
           model,
           code: inputCode,
+          apiKey,
         }),
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const code: { data: string } = await res.json();
       setOutputCode(code.data);
-      setHasTranslated(true);
       setLoading(false);
     } catch (e) {
       console.error(e);
@@ -37,16 +52,48 @@ export default function HomePage() {
   return (
     <main className="min-h-[80vh] ">
       <div className="flex flex-col items-center justify-center gap-8 py-8 md:gap-16 md:pb-16 xl:pb-24">
-        <div className="mt-2 flex items-center space-x-2">
-          {/* <ModelSelect model={model} onChange={(value) => setModel(value)} /> */}
+        <div className="mt-2 flex max-w-4xl items-center justify-between gap-x-5">
+          <div>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button variant="bordered" className="capitalize">
+                  {selectedModel}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Single selection example"
+                variant="flat"
+                disallowEmptySelection
+                selectionMode="single"
+                selectedKeys={model}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+                onSelectionChange={(keys: any) => setModel(new Set(keys))}
+              >
+                <DropdownItem key="openAI">OpenAI</DropdownItem>
+                <DropdownItem key="claude">Claude</DropdownItem>
+                <DropdownItem key="gemini">Gemini</DropdownItem>
+                <DropdownItem key="local">Local</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
 
-          <button
-            className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
-            onClick={() => handleTranslate()}
-            disabled={loading}
-          >
-            {loading ? "Automagically rebuilding script..." : "UnMinify"}
-          </button>
+          <Input
+            type="text"
+            variant="flat"
+            placeholder="Enter your api key"
+            onValueChange={setApiKey}
+            size="md"
+          />
+
+          <div>
+            <Button
+              variant="flat"
+              onClick={handleTranslate}
+              isLoading={loading}
+            >
+              {loading ? "UnMinifying" : "UnMinify"}
+            </Button>
+          </div>
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
@@ -58,7 +105,6 @@ export default function HomePage() {
               editable={!loading}
               onChange={(value) => {
                 setInputCode(value);
-                setHasTranslated(false);
               }}
             />
           </div>
